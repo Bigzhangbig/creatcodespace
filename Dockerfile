@@ -15,15 +15,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gnupg \
     lsb-release \
+    unzip \
     # Modern Unix tools
     bat \
     ripgrep \
     fd-find \
-    procs \
     duf \
     tldr \
     zoxide \
-    btm \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install additional modern tools not in standard apt-repo or needing specific versions
@@ -39,6 +38,11 @@ RUN ARCH=$(dpkg --print-architecture) && \
     curl -L https://github.com/ducaale/xh/releases/download/v0.18.0/xh-v0.18.0-x86_64-unknown-linux-musl.tar.gz | tar xz -C /usr/local/bin --strip-components=1 && \
     # sd (sed replacement)
     curl -L https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-x86_64-unknown-linux-gnu.tar.gz | tar xz -C /usr/local/bin --strip-components=1 && \
+    # procs (ps replacement)
+    curl -L https://github.com/dalance/procs/releases/download/v0.14.9/procs-v0.14.9-x86_64-linux.zip -o procs.zip && \
+    unzip procs.zip -d /usr/local/bin && rm procs.zip && \
+    # btm (top replacement)
+    curl -L https://github.com/ClementTsang/bottom/releases/download/0.9.6/bottom_x86_64-unknown-linux-gnu.tar.gz | tar xz -C /usr/local/bin && \
     # delta (diff replacement)
     DELTA_VER="0.16.5" && \
     curl -LO https://github.com/dandavison/delta/releases/download/$DELTA_VER/git-delta_${DELTA_VER}_$ARCH.deb && \
