@@ -23,5 +23,5 @@
       ]
     }
   },
-  "postCreateCommand": "fish"
+  "postCreateCommand": ""
 }
