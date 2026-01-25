@@ -23,5 +23,5 @@
       ]
     }
   },
-  "postCreateCommand": "bash .devcontainer/setup.sh"
+  "postCreateCommand": "fish"
 }
