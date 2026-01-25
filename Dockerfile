@@ -15,7 +15,35 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gnupg \
     lsb-release \
+    # Modern Unix tools
+    bat \
+    ripgrep \
+    fd-find \
+    procs \
+    duf \
+    tldr \
+    zoxide \
+    btm \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install additional modern tools not in standard apt-repo or needing specific versions
+RUN ARCH=$(dpkg --print-architecture) && \
+    # eza (ls replacement)
+    mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | gpg --dearmor -o /etc/apt/keyrings/gierens.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | tee /etc/apt/sources.list.d/gierens.list && \
+    apt-get update && apt-get install -y eza && \
+    # dust (du replacement)
+    curl -L https://github.com/bootandy/dust/releases/download/v1.0.0/dust-v1.0.0-x86_64-unknown-linux-gnu.tar.gz | tar xz -C /usr/local/bin --strip-components=1 && \
+    # xh (curl replacement)
+    curl -L https://github.com/ducaale/xh/releases/download/v0.18.0/xh-v0.18.0-x86_64-unknown-linux-musl.tar.gz | tar xz -C /usr/local/bin --strip-components=1 && \
+    # sd (sed replacement)
+    curl -L https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-x86_64-unknown-linux-gnu.tar.gz | tar xz -C /usr/local/bin --strip-components=1 && \
+    # delta (diff replacement)
+    DELTA_VER="0.16.5" && \
+    curl -LO https://github.com/dandavison/delta/releases/download/$DELTA_VER/git-delta_${DELTA_VER}_$ARCH.deb && \
+    dpkg -i git-delta_${DELTA_VER}_$ARCH.deb && rm git-delta_${DELTA_VER}_$ARCH.deb && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set up Chinese Language Pack
 RUN sed -i -e 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen && \
@@ -59,6 +87,18 @@ RUN fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main
 # Create fish config and initialize oh-my-posh
 RUN mkdir -p /home/vscode/.config/fish && \
     echo 'oh-my-posh init fish --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json | source' >> /home/vscode/.config/fish/config.fish && \
+    echo 'zoxide init fish | source' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias ls="eza --icons"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias cat="batcat --paging=never"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias grep="rg"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias find="fd"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias ps="procs"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias du="dust"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias df="duf"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias sed="sd"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias curl="xh"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias top="btm"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias diff="delta"' >> /home/vscode/.config/fish/config.fish && \
     # Ensure fisher is loaded
     mkdir -p /home/vscode/.config/fish/functions && \
     curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish -o /home/vscode/.config/fish/functions/fisher.fish
