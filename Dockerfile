@@ -68,7 +68,7 @@ RUN install -m 0755 -d /etc/apt/keyrings \
 # Install Node.js and pnpm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
-    && npm install -g pnpm \
+    && npm install -g pnpm gemini-chat-cli \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install oh-my-posh
@@ -103,6 +103,7 @@ RUN mkdir -p /home/vscode/.config/fish && \
     echo 'alias curl="xh"' >> /home/vscode/.config/fish/config.fish && \
     echo 'alias top="btm"' >> /home/vscode/.config/fish/config.fish && \
     echo 'alias diff="delta"' >> /home/vscode/.config/fish/config.fish && \
+    echo 'alias gemini="gemini-chat"' >> /home/vscode/.config/fish/config.fish && \
     # Ensure fisher is loaded
     mkdir -p /home/vscode/.config/fish/functions && \
     curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish -o /home/vscode/.config/fish/functions/fisher.fish
