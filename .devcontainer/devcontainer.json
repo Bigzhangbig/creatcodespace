@@ -21,6 +21,13 @@
         "ms-python.python",
         "MS-CEINTL.vscode-language-pack-zh-hans"
       ]
+    },
+    "codespaces": {
+      "repositories": {
+        "Bigzhangbig/dotfile": {
+          "permissions": "write-all" // 或者 "write-all"
+        }
+      }
     }
   },
   "postCreateCommand": ""
