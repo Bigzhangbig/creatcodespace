@@ -39,15 +39,28 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && npm install -g pnpm \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Install oh-my-posh
+RUN curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/local/bin
+
 # Set fish as default shell for the vscode user
 RUN chsh -s /usr/bin/fish vscode
 
-# Install fisher and some plugins as vscode user
+# Install fisher and plugins as vscode user
 USER vscode
-RUN fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher"
+WORKDIR /home/vscode
 
-# Ensure fisher is available in interactive shells
-RUN mkdir -p /home/vscode/.config/fish/functions && \
+# Pre-configure fish: install fisher and plugins, setup oh-my-posh
+RUN fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && \
+    fisher install jorgebucaran/fisher \
+    fisher install jethrokuan/z \
+    fisher install patrickf1/fzf.fish \
+    fisher install Bridgetown-rb/fish-done"
+
+# Create fish config and initialize oh-my-posh
+RUN mkdir -p /home/vscode/.config/fish && \
+    echo 'oh-my-posh init fish --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json | source' >> /home/vscode/.config/fish/config.fish && \
+    # Ensure fisher is loaded
+    mkdir -p /home/vscode/.config/fish/functions && \
     curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish -o /home/vscode/.config/fish/functions/fisher.fish
 
 # Back to root for any final steps
